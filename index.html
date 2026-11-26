@@ -1,0 +1,549 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jusur English World</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f7ff;
+  color: #263b55;
+  text-align: center;
+}
+
+header {
+  background: linear-gradient(135deg, #2878b9, #53b6d8);
+  color: white;
+  padding: 25px 15px;
+  border-radius: 0 0 30px 30px;
+}
+
+header h1 {
+  margin: 5px;
+  font-size: 27px;
+}
+
+header p {
+  margin: 8px 0 0;
+}
+
+.container {
+  max-width: 650px;
+  margin: auto;
+  padding: 20px 15px;
+}
+
+.score {
+  background: white;
+  padding: 12px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.categories {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.category {
+  border: none;
+  background: white;
+  border-radius: 18px;
+  padding: 18px 8px;
+  font-size: 19px;
+  font-weight: bold;
+  color: #263b55;
+  box-shadow: 0 3px 8px #00000012;
+  cursor: pointer;
+}
+
+.category span {
+  display: block;
+  font-size: 35px;
+  margin-bottom: 8px;
+}
+
+.category:active {
+  transform: scale(.96);
+}
+
+#game {
+  display: none;
+  background: white;
+  padding: 22px 15px;
+  border-radius: 25px;
+  box-shadow: 0 4px 15px #00000010;
+}
+
+.question {
+  font-size: 25px;
+  font-weight: bold;
+  margin: 15px 0;
+  direction: ltr;
+}
+
+.picture {
+  font-size: 75px;
+  margin: 15px;
+}
+
+.answers {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  direction: ltr;
+}
+
+.answer {
+  background: #eaf4ff;
+  border: 3px solid transparent;
+  border-radius: 16px;
+  padding: 17px 5px;
+  font-size: 21px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #263b55;
+}
+
+.answer.correct {
+  background: #d9f8df;
+  border-color: #36b85a;
+}
+
+.answer.wrong {
+  background: #ffe0e0;
+  border-color: #ef5350;
+}
+
+button {
+  font-family: inherit;
+}
+
+.action {
+  border: none;
+  background: #2878b9;
+  color: white;
+  padding: 13px 25px;
+  font-size: 18px;
+  border-radius: 13px;
+  margin: 12px 5px;
+  cursor: pointer;
+}
+
+.action.secondary {
+  background: #718096;
+}
+
+#message {
+  font-size: 22px;
+  font-weight: bold;
+  min-height: 35px;
+  margin: 15px 0;
+}
+
+#progress {
+  color: #718096;
+  font-size: 17px;
+}
+
+footer {
+  padding: 20px;
+  color: #718096;
+  font-size: 14px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <div style="font-size:45px">🌍⭐</div>
+  <h1>Jusur English World</h1>
+  <p>عالم جسور الأمل للغة الإنجليزية</p>
+  <p>Let's Learn and Play!</p>
+</header>
+
+<div class="container">
+
+  <div class="score">
+    ⭐ Score: <span id="score">0</span>
+  </div>
+
+  <div id="home">
+    <h2>اختر عالمك المفضل</h2>
+    <p>Choose a Category</p>
+
+    <div class="categories">
+
+      <button class="category" onclick="startGame('colors')">
+        <span>🎨</span>
+        Colors<br>الألوان
+      </button>
+
+      <button class="category" onclick="startGame('animals')">
+        <span>🐶</span>
+        Animals<br>الحيوانات
+      </button>
+
+      <button class="category" onclick="startGame('fruits')">
+        <span>🍎</span>
+        Fruits<br>الفواكه
+      </button>
+
+      <button class="category" onclick="startGame('vegetables')">
+        <span>🥕</span>
+        Vegetables<br>الخضروات
+      </button>
+
+      <button class="category" onclick="startGame('numbers')">
+        <span>🔢</span>
+        Numbers<br>الأرقام
+      </button>
+
+      <button class="category" onclick="startGame('shapes')">
+        <span>🔺</span>
+        Shapes<br>الأشكال
+      </button>
+
+      <button class="category" onclick="startGame('body')">
+        <span>👀</span>
+        Body Parts<br>أجزاء الجسم
+      </button>
+
+      <button class="category" onclick="startGame('transport')">
+        <span>🚗</span>
+        Transport<br>المواصلات
+      </button>
+
+    </div>
+  </div>
+
+  <div id="game">
+
+    <div id="progress"></div>
+
+    <div class="question" id="question">
+      What is this?
+    </div>
+
+    <div class="picture" id="picture"></div>
+
+    <button class="action secondary" onclick="speakWord()">
+      🔊 Listen
+    </button>
+
+    <div class="answers" id="answers"></div>
+
+    <div id="message"></div>
+
+    <button class="action" id="next" onclick="nextQuestion()"
+      style="display:none">
+      Next ➡️
+    </button>
+
+    <br>
+
+    <button class="action secondary" onclick="goHome()">
+      🏠 Home
+    </button>
+
+  </div>
+
+</div>
+
+<footer>
+  Jusur Al-Amal Special Education School<br>
+  Learning with Love 💙
+</footer>
+
+<script>
+
+const data = {
+
+colors: [
+  {word:"Red", emoji:"🔴"},
+  {word:"Blue", emoji:"🔵"},
+  {word:"Yellow", emoji:"🟡"},
+  {word:"Green", emoji:"🟢"},
+  {word:"Orange", emoji:"🟠"},
+  {word:"Purple", emoji:"🟣"},
+  {word:"Black", emoji:"⚫"},
+  {word:"White", emoji:"⚪"},
+  {word:"Pink", emoji:"🩷"},
+  {word:"Brown", emoji:"🟤"}
+],
+
+animals: [
+  {word:"Cat", emoji:"🐱"},
+  {word:"Dog", emoji:"🐶"},
+  {word:"Lion", emoji:"🦁"},
+  {word:"Elephant", emoji:"🐘"},
+  {word:"Monkey", emoji:"🐒"},
+  {word:"Rabbit", emoji:"🐰"},
+  {word:"Fish", emoji:"🐟"},
+  {word:"Bird", emoji:"🐦"},
+  {word:"Horse", emoji:"🐴"},
+  {word:"Cow", emoji:"🐮"}
+],
+
+fruits: [
+  {word:"Apple", emoji:"🍎"},
+  {word:"Banana", emoji:"🍌"},
+  {word:"Orange", emoji:"🍊"},
+  {word:"Grapes", emoji:"🍇"},
+  {word:"Watermelon", emoji:"🍉"},
+  {word:"Strawberry", emoji:"🍓"},
+  {word:"Pineapple", emoji:"🍍"},
+  {word:"Mango", emoji:"🥭"},
+  {word:"Peach", emoji:"🍑"},
+  {word:"Lemon", emoji:"🍋"}
+],
+
+vegetables: [
+  {word:"Carrot", emoji:"🥕"},
+  {word:"Tomato", emoji:"🍅"},
+  {word:"Potato", emoji:"🥔"},
+  {word:"Cucumber", emoji:"🥒"},
+  {word:"Onion", emoji:"🧅"},
+  {word:"Corn", emoji:"🌽"},
+  {word:"Broccoli", emoji:"🥦"},
+  {word:"Pepper", emoji:"🫑"}
+],
+
+numbers: [
+  {word:"One", emoji:"1️⃣"},
+  {word:"Two", emoji:"2️⃣"},
+  {word:"Three", emoji:"3️⃣"},
+  {word:"Four", emoji:"4️⃣"},
+  {word:"Five", emoji:"5️⃣"},
+  {word:"Six", emoji:"6️⃣"},
+  {word:"Seven", emoji:"7️⃣"},
+  {word:"Eight", emoji:"8️⃣"},
+  {word:"Nine", emoji:"9️⃣"},
+  {word:"Ten", emoji:"🔟"}
+],
+
+shapes: [
+  {word:"Circle", emoji:"🔴"},
+  {word:"Square", emoji:"🟦"},
+  {word:"Triangle", emoji:"🔺"},
+  {word:"Star", emoji:"⭐"},
+  {word:"Heart", emoji:"❤️"},
+  {word:"Diamond", emoji:"💎"},
+  {word:"Oval", emoji:"🥚"},
+  {word:"Rectangle", emoji:"▰"}
+],
+
+body: [
+  {word:"Eyes", emoji:"👀"},
+  {word:"Nose", emoji:"👃"},
+  {word:"Mouth", emoji:"👄"},
+  {word:"Ear", emoji:"👂"},
+  {word:"Hand", emoji:"✋"},
+  {word:"Foot", emoji:"🦶"},
+  {word:"Head", emoji:"🧑"},
+  {word:"Teeth", emoji:"🦷"}
+],
+
+transport: [
+  {word:"Car", emoji:"🚗"},
+  {word:"Bus", emoji:"🚌"},
+  {word:"Train", emoji:"🚆"},
+  {word:"Airplane", emoji:"✈️"},
+  {word:"Boat", emoji:"🚤"},
+  {word:"Bicycle", emoji:"🚲"},
+  {word:"Ambulance", emoji:"🚑"},
+  {word:"Fire Truck", emoji:"🚒"}
+]
+
+};
+
+let currentCategory = [];
+let currentIndex = 0;
+let score = 0;
+let answered = false;
+let currentWord = null;
+
+function startGame(category) {
+
+  currentCategory = [...data[category]];
+  currentCategory.sort(() => Math.random() - 0.5);
+
+  currentIndex = 0;
+  score = 0;
+
+  document.getElementById("score").textContent = score;
+  document.getElementById("home").style.display = "none";
+  document.getElementById("game").style.display = "block";
+
+  showQuestion();
+}
+
+function showQuestion() {
+
+  answered = false;
+
+  if (currentIndex >= currentCategory.length) {
+    finishGame();
+    return;
+  }
+
+  currentWord = currentCategory[currentIndex];
+
+  document.getElementById("progress").textContent =
+    "Question " + (currentIndex + 1) +
+    " / " + currentCategory.length;
+
+  document.getElementById("question").textContent =
+    "What is this?";
+
+  document.getElementById("picture").textContent =
+    currentWord.emoji;
+
+  document.getElementById("message").textContent = "";
+  document.getElementById("next").style.display = "none";
+
+  let options = [currentWord];
+
+  while (options.length < 4) {
+    let random = currentCategory[
+      Math.floor(Math.random() * currentCategory.length)
+    ];
+
+    if (!options.some(item => item.word === random.word)) {
+      options.push(random);
+    }
+  }
+
+  options.sort(() => Math.random() - 0.5);
+
+  const answers = document.getElementById("answers");
+  answers.innerHTML = "";
+
+  options.forEach(option => {
+
+    const button = document.createElement("button");
+    button.className = "answer";
+    button.textContent = option.word;
+
+    button.onclick = () => checkAnswer(button, option);
+
+    answers.appendChild(button);
+  });
+
+}
+
+function checkAnswer(button, option) {
+
+  if (answered) return;
+
+  answered = true;
+
+  const buttons = document.querySelectorAll(".answer");
+
+  buttons.forEach(btn => {
+    btn.disabled = true;
+
+    if (btn.textContent === currentWord.word) {
+      btn.classList.add("correct");
+    }
+  });
+
+  const message = document.getElementById("message");
+
+  if (option.word === currentWord.word) {
+
+    score += 10;
+    document.getElementById("score").textContent = score;
+
+    message.textContent = "🎉 Excellent! Great job!";
+    message.style.color = "#269b50";
+
+  } else {
+
+    button.classList.add("wrong");
+
+    message.textContent = "💪 Try again next time!";
+    message.style.color = "#e05252";
+
+  }
+
+  speakWord();
+
+  document.getElementById("next").style.display = "inline-block";
+}
+
+function nextQuestion() {
+
+  currentIndex++;
+  showQuestion();
+
+}
+
+function speakWord() {
+
+  if (!currentWord) return;
+
+  if ("speechSynthesis" in window) {
+
+    speechSynthesis.cancel();
+
+    const speech = new SpeechSynthesisUtterance(
+      currentWord.word
+    );
+
+    speech.lang = "en-US";
+    speech.rate = 0.75;
+
+    speechSynthesis.speak(speech);
+  }
+
+}
+
+function finishGame() {
+
+  document.getElementById("progress").textContent = "Game Completed!";
+
+  document.getElementById("question").textContent =
+    "You are a Super Star!";
+
+  document.getElementById("picture").textContent = "🏆";
+
+  document.getElementById("answers").innerHTML = "";
+
+  document.getElementById("message").textContent =
+    "Your Score: " + score + " ⭐";
+
+  document.getElementById("next").style.display = "none";
+
+}
+
+function goHome() {
+
+  document.getElementById("game").style.display = "none";
+  document.getElementById("home").style.display = "block";
+
+  currentWord = null;
+
+  if ("speechSynthesis" in window) {
+    speechSynthesis.cancel();
+  }
+
+}
+
+</script>
+
+</body>
+</html>
